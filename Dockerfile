@@ -1,8 +1,14 @@
-FROM buildpack-deps:bullseye
+FROM ghcr.io/dion-ricky/python3.6.9:release as python-build-image
 
-WORKDIR /root
+FROM ubuntu:focal as main
 
-COPY ./python3.6.9 /root/python3.6.9
+ENV DEBIAN_FRONTEND="noninteractive" TZ="America/New_York"
+ENV PATH=/usr/local/bin:$PATH
+
+COPY --chown=root:root --from=python-build-image /usr/local/bin /usr/local/bin
+COPY --chown=root:root --from=python-build-image /usr/local/include /usr/local/include
+COPY --chown=root:root --from=python-build-image /usr/local/lib /usr/local/lib
+COPY --chown=root:root --from=python-build-image /usr/local/share /usr/local/share
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
@@ -11,11 +17,6 @@ RUN apt-get update \
   && apt-get autoremove -yqq --purge \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
-
-RUN ln -s /root/python3.6.9/bin/python3 /root/python3.6.9/bin/python \
-  && ln -s /root/python3.6.9/bin/pip3 /root/python3.6.9/bin/pip
-
-ENV PATH=/root/python3.6.9/bin:$PATH
 
 WORKDIR /
 CMD ["python3"]
