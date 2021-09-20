@@ -1,6 +1,6 @@
 FROM ghcr.io/dion-ricky/python3.6.9:release as python-build-image
 
-FROM ubuntu:focal as main
+FROM ubuntu:bionic as main
 
 ENV DEBIAN_FRONTEND="noninteractive" TZ="America/New_York"
 ENV PATH=/usr/local/bin:$PATH
